@@ -1,1 +1,0 @@
-/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/EchoServer.dir/link.d CMakeFiles/EchoServer.dir/src/main.cpp.o -o EchoServer

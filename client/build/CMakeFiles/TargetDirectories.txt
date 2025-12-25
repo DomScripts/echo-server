@@ -1,3 +1,0 @@
-/home/dom/Documents/projects/TCPEchoServer/client/build/CMakeFiles/EchoClient.dir
-/home/dom/Documents/projects/TCPEchoServer/client/build/CMakeFiles/edit_cache.dir
-/home/dom/Documents/projects/TCPEchoServer/client/build/CMakeFiles/rebuild_cache.dir
