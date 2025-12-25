@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/dom/Documents/projects/TCPEchoServer/client/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

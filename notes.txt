@@ -1,0 +1,61 @@
+======================
+IP Addresses
+----------------------
+- A server constantly listens out on a port for a connection coming in. A client will sent a message to a specific port for a server to capture
+    - Both the server and client use an IP and port number.
+
+- The IP address of both server and client is configures during Network setup unless it is allocated dynamically.
+
+- A machine may have more than one network interface card (NIC), in which case it may have more than one IP address.
+
+- When developing Network Programs the port number of the server is usually specified within the code, whereas the client port number is allocated by the O/S.
+    - Therefore, the client is allocated a port by the O/S but can specify which server port it wants to connect to.
+
+- The Loopback address 127.0.0.1 refers to the current machine. 
+    - This can be used during development to test both client and server on a single machine.
+    - Will simulate the network as it will still descend and ascend the OSI layers.
+
+======================
+Ports
+----------------------
+- Port numbers (16-bit addresses) can be any integer between 1 and 65,535
+    - Ports 1...1,023 are described as well known ports and are reserved for specific applications.
+    - It is recommended to choose a number over 1024. To be (almost) sure that your desired port isn't already in use.
+
+======================
+Sockets
+----------------------
+- A "pipe" between two computers on a network through which data flows.
+    - Sockets are the handle to the connection.
+
+- Sockets are two-way, data can be both sent and received on a socket.
+
+- Two common types for a socket are:
+    - Streaming socket [TCP]
+    - Datagram socket [UDP]
+
+Steps on how a connection is made
+    1. The server creates a socket and specifies which IP and Port it wants to listen to.
+    2. The client creates a socket and specifies the IP and Port it wants to connect to.
+    3. The server binds to this request and duplicated its socket.
+        - You now have 2 duplicate sockets on the server one for listening and another for data transfer.
+
+======================
+Server Functions
+----------------------
+1. Initialize WSA - WSAStartup() [only Windows]
+2. Create a socket - socket()
+3. Bind the socket - bind()
+4. Listen on the socket - listen()
+5. Accept a connection - accept(), connect()
+6. Send and recieve data - recv(), send(), recvfrom(), sendto()
+7. Disconnect - closesocket()
+
+======================
+Client Functions
+----------------------
+1. Initialize WSA - WSAStartup() [only Windows]
+2. Create a socket - socket()
+3. COnnect to the server - connect()
+4. Send and recieve data - recv(), send(), recvfrom(), sendto()
+5. Disconnect - closesocket()
