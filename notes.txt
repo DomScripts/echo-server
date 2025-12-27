@@ -56,6 +56,6 @@ Client Functions
 ----------------------
 1. Initialize WSA - WSAStartup() [only Windows]
 2. Create a socket - socket()
-3. COnnect to the server - connect()
+3. Connect to the server - connect()
 4. Send and recieve data - recv(), send(), recvfrom(), sendto()
 5. Disconnect - closesocket()

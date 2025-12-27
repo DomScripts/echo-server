@@ -62,5 +62,26 @@ int main()
         std::cout << "Accepted connection\n";
     }
 
+    // ---- Recieve Client Data ----
+    char buffer[200];
+
+    int byteCount = ::recv(acceptSocket, buffer, 200, 0);
+    
+    if (byteCount > 0)
+    {
+        std::cout << "Message recieved: " << buffer << '\n';
+    }
+
+    // ---- Send Data Back ----
+    char confirmation[200] = "Message Recieved!";
+
+    byteCount = ::send(acceptSocket, confirmation, 200, 0);
+
+    if (byteCount > 0)
+    {
+        std::cout << "Automated confirmation message sent.\n";
+    }
+
+    ::close(serverSocket);
     return 0;
 }

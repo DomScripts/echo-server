@@ -38,5 +38,30 @@ int main()
         std::cout << "Client: Can start sending and receiving data...\n";
     }
 
+    // ---- Sending TCP Data ----
+    char buffer[200];
+
+    std::cout << "Please enter a message to send: "; 
+    std::cin.getline(buffer, 200);
+    int byteCount = ::send(clientSocket, buffer, 200, 0);
+
+    if (byteCount > 0)
+    {
+        std::cout << "Message sent: " << buffer << '\n';
+    }
+    else
+    {
+        std::cout << "Message failed to send.\n";
+    }
+
+    // ---- Recieve Confirmation Message ----
+    byteCount = ::recv(clientSocket, buffer, 200,0);
+
+    if (byteCount > 0)
+    {
+        std::cout << "Message received: " << buffer << '\n';
+    }   
+
+    ::close(clientSocket);
     return 0;
 }
