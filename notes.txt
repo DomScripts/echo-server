@@ -59,3 +59,11 @@ Client Functions
 3. Connect to the server - connect()
 4. Send and recieve data - recv(), send(), recvfrom(), sendto()
 5. Disconnect - closesocket()
+
+======================
+Todo
+----------------------
+1. Setup a back and forth message sender until someone says "SHUTDOWN".
+2. Modify the server so each new connection is managed by a thread.
+    - Within main you need to implement a loop which you accept connections and create a new thread. Passing the accepted socket to the thread function.
+3. Setup a UDP client/server.
