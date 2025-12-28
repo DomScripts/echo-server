@@ -63,7 +63,6 @@ Client Functions
 ======================
 Todo
 ----------------------
-1. Setup a back and forth message sender until someone says "SHUTDOWN".
-2. Modify the server so each new connection is managed by a thread.
+1. Modify the server so each new connection is managed by a thread.
     - Within main you need to implement a loop which you accept connections and create a new thread. Passing the accepted socket to the thread function.
-3. Setup a UDP client/server.
+2. Setup a UDP client/server.

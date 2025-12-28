@@ -5,6 +5,9 @@
 #include <netinet/in.h> // IPPROTO_TCP, htons, sockaddr_in, etc.
 #include <arpa/inet.h> // inet_pton
 #include <unistd.h> // close()
+                    
+#include <fraction.h>
+#include <fractionwire.h>
 
 int main()
 {
@@ -39,15 +42,18 @@ int main()
     }
 
     // ---- Sending TCP Data ----
-    char buffer[200];
+    Fraction frac{ 1, 2 };
 
-    std::cout << "Please enter a message to send: "; 
-    std::cin.getline(buffer, 200);
-    int byteCount = ::send(clientSocket, buffer, 200, 0);
+    FractionWire wire{ };
+    wire.m_numerator = htonl(frac.getNumerator());
+    wire.m_denominator = htonl(frac.getDenominator());
+
+    int byteCount = ::send(clientSocket, &wire, sizeof(wire), 0);
 
     if (byteCount > 0)
     {
-        std::cout << "Message sent: " << buffer << '\n';
+        std::cout << "Sent message: ";
+        frac.print();
     }
     else
     {
@@ -55,6 +61,7 @@ int main()
     }
 
     // ---- Recieve Confirmation Message ----
+    char buffer[200];
     byteCount = ::recv(clientSocket, buffer, 200,0);
 
     if (byteCount > 0)

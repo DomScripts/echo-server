@@ -4,4 +4,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 cmake_minimum_required(VERSION 4.2.1)
 project(client VERSION 1.0 LANGUAGES CXX)
 
+add_library(fraction INTERFACE)
+target_include_directories(fraction INTERFACE
+    ${CMAKE_CURRENT_LIST_DIR}/../include
+)
+
 add_executable(client src/main.cpp)
+
+target_link_libraries(client PRIVATE fraction)

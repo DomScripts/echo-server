@@ -6,6 +6,9 @@
 #include <arpa/inet.h> // inet_pton
 #include <unistd.h> // close()
 
+#include <fraction.h>
+#include <fractionwire.h>
+
 int main()
 {
     // ---- Create Socket ----
@@ -63,13 +66,18 @@ int main()
     }
 
     // ---- Recieve Client Data ----
-    char buffer[200];
+    FractionWire wire{ };
 
-    int byteCount = ::recv(acceptSocket, buffer, 200, 0);
+    int byteCount = ::recv(acceptSocket, &wire, sizeof(wire), 0);
     
+    Fraction frac{ };
+    frac.setNumerator(ntohl(wire.m_numerator));
+    frac.setDenominator(ntohl(wire.m_denominator));
+
     if (byteCount > 0)
     {
-        std::cout << "Message recieved: " << buffer << '\n';
+        std::cout << "Recieved message: ";
+        frac.print();
     }
 
     // ---- Send Data Back ----
@@ -77,9 +85,18 @@ int main()
 
     byteCount = ::send(acceptSocket, confirmation, 200, 0);
 
-    if (byteCount > 0)
+    if (byteCount == -1)
     {
-        std::cout << "Automated confirmation message sent.\n";
+        std::cout << "Error at send():" << errno
+            << " (" << std::strerror(errno) << ")\n";
+    }
+    else if (byteCount > 0)
+    {
+        std::cout << "Automated confirmation message send.\n";
+    }
+    else 
+    {
+        std::cout << "Failed to send automated confirmation message.\n";
     }
 
     ::close(serverSocket);
