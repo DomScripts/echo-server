@@ -32,7 +32,7 @@ int main()
 
     if (::bind(serverSocket, reinterpret_cast<sockaddr*>(&service), sizeof(service)) == -1)
     {
-        std::cout << "Error at socket():" << errno
+        std::cout << "Error at bind():" << errno
             << " (" << std::strerror(errno) << ")\n";
         ::close(serverSocket);
         return 0;
