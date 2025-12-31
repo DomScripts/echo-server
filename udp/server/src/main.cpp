@@ -7,6 +7,9 @@
 #include <cstring>
 #include <iostream>
 
+#include <fraction.h>
+#include <fractionwire.h>
+
 int main()
 {
     // Create the socket
@@ -37,12 +40,12 @@ int main()
     // Waiting for data
     for (;;)
     {
-        char buffer[2048];
+        FractionWire wire{ };
 
         sockaddr_in peer{ };
         socklen_t peerLength = sizeof(peer);
         
-        int32_t byteSize = ::recvfrom(serverSocket, buffer, sizeof(buffer), 0,
+        int32_t byteSize = ::recvfrom(serverSocket, &wire, sizeof(wire), 0,
                                   reinterpret_cast<sockaddr*>(&peer), &peerLength);
 
         if (byteSize == -1)
@@ -52,18 +55,12 @@ int main()
             continue;
         }
 
-        std::cout << "Reveived value: " << buffer << '\n';
+        Fraction frac{ };
+        frac.setNumerator(ntohl(wire.m_numerator));
+        frac.setDenominator(ntohl(wire.m_denominator));
 
-        // Send confirmation message
-        int sent = ::sendto(serverSocket, buffer, byteSize, 0,
-                            reinterpret_cast<sockaddr*>(&peer), sizeof(peer));
-        
-        if (sent == -1)
-        {
-            std::cout << "Error at sendto():" << errno
-                << " (" << std::strerror(errno) << ")\n";
-        }
-        else { std::cout << "Confirmation message sent!\n"; }
+        std::cout << "Reveived value: ";
+        frac.print();
     }
 
     ::close(serverSocket);

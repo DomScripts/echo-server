@@ -8,6 +8,9 @@
 #include <cstring>
 #include <iostream>
 
+#include <fraction.h>
+#include <fractionwire.h>
+
 int main()
 {
     // Create client socket
@@ -25,34 +28,25 @@ int main()
     ::inet_pton(AF_INET, "127.0.0.1", &server.sin_addr);
 
     // Send message to the sever
-    const char* message = "Hello vio udp.";
+    Fraction frac{ 1, 2 };
+    FractionWire wire{ };
 
-    int byteCount = ::sendto(clientSocket, message, std::strlen(message), 0,
-                            reinterpret_cast<sockaddr*>(&server), sizeof(server));
-
-    if (byteCount == -1)
+    for (int i = 0; i <5; i++)
     {
-        std::cout << "Error at sendto():" << errno
-            << " (" << std::strerror(errno) << ")\n";
-    } else { std::cout << "Message sent to server!\n"; }
+        wire.m_numerator = htonl(frac.getNumerator());
+        wire.m_denominator = htonl(frac.getDenominator());
 
-    // Receive confirmation from server
-    char buffer[2048];
-    sockaddr_in from{ };
-    socklen_t from_length = sizeof(from);
+        int byteCount = ::sendto(clientSocket, &wire, sizeof(wire), 0,
+                                 reinterpret_cast<sockaddr*>(&server), sizeof(server));
 
-    byteCount = ::recvfrom(clientSocket, buffer, sizeof(buffer) - 1, 0,
-                            reinterpret_cast<sockaddr*>(&from), &from_length);
+        if (byteCount == -1)
+        {
+             std::cout << "Error at sendto():" << errno
+                 << " (" << std::strerror(errno) << ")\n";
+        } else { std::cout << "Message sent to server!\n"; }
 
-    if (byteCount == -1)
-    {
-        std::cout << "Error at recvfrom():" << errno
-            << " (" << std::strerror(errno) << ")\n";
-    } 
-    else 
-    { 
-        buffer[byteCount] = '\0';
-        std::cout << "Message received: " << buffer << '\n'; 
+        frac.setNumerator(frac.getNumerator() + 1);
+        frac.setDenominator(frac.getDenominator() + 1);
     }
 
     ::close(clientSocket);
