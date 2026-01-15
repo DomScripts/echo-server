@@ -9,7 +9,7 @@ private:
 public:
     Fraction() { }
 
-    Fraction(const itn x, const in y)
+    Fraction(const int x, const int y)
         : m_numerator{ x }
         , m_denominator{ y }
     { }

@@ -1,9 +1,15 @@
 #pragma once
 
-#include <cstdint.h> // C std-int
+#include <cstdint> // C std-int
+#include <arpa/inet.h> // ntohl
 
 struct FractionWire
 {
-    int32_t m_numerator{ };
-    int32_t m_denominator{ };
+    uint32_t m_numerator{ };
+    uint32_t m_denominator{ };
+
+    void printReadable()
+    {
+        std::cout << ntohl(m_numerator) << "/" << ntohl(m_denominator) << '\n';
+    }
 };

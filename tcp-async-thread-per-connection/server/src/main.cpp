@@ -7,23 +7,51 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <mutex>
 
 #include <fraction.h>
 #include <fractionwire.h>
 
+std::mutex clientID_lock;
+int clientID = 0;
+
 void openConnection(int acceptedSocket)
 {
     FractionWire wire;
+    int clientID_copy;
 
-    int byteCount = ::revc(acceptedSocket, &wire, sizeof(wire), 0);
-
-    Fraction frac(ntohl(wire.m_numerator), ntohl(wire.m_denominator));
-
-    if (byteCount > 0)
+    clientID_lock.lock();
     {
-        std::cout << "[server] Message received: " << frac.print() << '\n';    
+        ++clientID;
+        clientID_copy = clientID;
     }
-    else { std::cout << "[server] Error accepting message.\n"; }
+    clientID_lock.unlock();
+
+    while (true)
+    {
+
+        int byteCount = ::recv(acceptedSocket, &wire, sizeof(wire), 0);
+
+        if (byteCount == 0)
+        {
+            std::cout << "[server] Client " << clientID_copy << " has disconnected.\n";
+            break;
+        }
+
+        if (byteCount > 0)
+        {
+            std::cout << "[server] Message received from clientID " << clientID_copy << " : ";    
+            
+            Fraction frac(ntohl(wire.m_numerator), ntohl(wire.m_denominator));
+            frac.print();
+        }
+        else 
+        { 
+            std::cout << "[server] Error accepting message.\n"; 
+            break;
+        }
+
+    }
 }
 
 int main()
@@ -34,13 +62,13 @@ int main()
     {
         std::cerr << "[server] Error at socket():" << errno
             << " (" << std::strerror(errno) << ")\n";
-    } else { std::cout "[server] socket() is OK!\n"; }
+    } else { std::cout << "[server] socket() is OK!\n"; }
 
 
     // Bind the socket
     sockaddr_in address{ };
     address.sin_family = AF_INET;
-    address.sin_port = htonsl(8080);
+    address.sin_port = htons(8080);
     inet_pton(AF_INET, "127.0.0.1", &address.sin_addr);
 
     if (::bind(serverSocket, reinterpret_cast<sockaddr*>(&address), sizeof(address)) == -1)
@@ -53,14 +81,13 @@ int main()
 
     
     // Listen out on the socket
-    if (::listen(sockServer, 1) == -1)
+    if (::listen(serverSocket, 1) == -1)
     {
         std::cerr << "[server] Error at listen():" << errno
             << " (" << std::strerror(errno) << ")\n";
     } else { std::cout << "[server] listen is OK!\n"; }
 
     
-    // Accept incoming connection [update to accept many connections]
     //std::vector<std::thread*> threads;
     for (;;)
     {
@@ -73,7 +100,7 @@ int main()
         else
         {
             //threads.push_back(new std::thread(openConnection, acceptedSocket));
-            std::thread t(openConnection, aacceptedSocket);
+            std::thread t(openConnection, acceptedSocket);
             
             if (t.joinable())
                 t.detach();
